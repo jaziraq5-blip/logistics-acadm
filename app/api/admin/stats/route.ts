@@ -12,15 +12,15 @@ export async function GET(request: NextRequest) {
     const certificatesCount = certificatesResult.rows[0]?.count || 0
 
     // Get team members count
-    const teamResult = await pool.query('SELECT COUNT(*) as count FROM team')
+    const teamResult = await pool.query('SELECT COUNT(*) as count FROM team_members')
     const teamCount = teamResult.rows[0]?.count || 0
 
     // Get messages count
-    const messagesResult = await pool.query('SELECT COUNT(*) as count FROM messages')
+    const messagesResult = await pool.query('SELECT COUNT(*) as count FROM contact_messages')
     const messagesCount = messagesResult.rows[0]?.count || 0
 
     // Get unread messages count
-    const unreadMessagesResult = await pool.query('SELECT COUNT(*) as count FROM messages WHERE is_read = false')
+    const unreadMessagesResult = await pool.query('SELECT COUNT(*) as count FROM contact_messages WHERE is_read = false')
     const unreadMessagesCount = unreadMessagesResult.rows[0]?.count || 0
 
     const stats = {
