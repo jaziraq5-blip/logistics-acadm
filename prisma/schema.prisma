@@ -1,0 +1,150 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model services {
+  id             Int      @id @default(autoincrement())
+  name_en        String
+  name_ar        String
+  name_ro        String
+  description_en String
+  description_ar String
+  description_ro String
+  icon           String?
+  image_url      String?  @db.VarChar(500)
+  features       Json?
+  is_active      Boolean  @default(true)
+  sort_order     Int      @default(0)
+  created_at     DateTime @default(now())
+  updated_at     DateTime
+
+  @@index([is_active], map: "idx_services_active")
+}
+
+model analytics {
+  id         String    @id @default(uuid()) @db.Uuid
+  event_type String    @db.VarChar(50)
+  event_data Json?     @default("{}")
+  user_agent String?
+  ip_address String?   @db.Inet
+  page_url   String?   @db.VarChar(500)
+  referrer   String?   @db.VarChar(500)
+  created_at DateTime? @default(now()) @db.Timestamptz(6)
+
+  @@index([created_at], map: "idx_analytics_created_at")
+  @@index([event_type], map: "idx_analytics_event_type")
+}
+
+model certificates {
+  id               String    @id @default(uuid()) @db.Uuid
+  name_en          String    @db.VarChar(200)
+  name_ar          String    @db.VarChar(200)
+  name_ro          String    @db.VarChar(200)
+  description_en   String?
+  description_ar   String?
+  description_ro   String?
+  image_url        String?   @db.VarChar(500)
+  certificate_type String?   @db.VarChar(100)
+  issued_by        String?   @db.VarChar(200)
+  issued_date      DateTime? @db.Date
+  expiry_date      DateTime? @db.Date
+  is_active        Boolean?  @default(true)
+  sort_order       Int?      @default(0)
+  created_at       DateTime? @default(now()) @db.Timestamptz(6)
+  updated_at       DateTime? @default(now()) @db.Timestamptz(6)
+
+  @@index([is_active], map: "idx_certificates_active")
+}
+
+model contact_messages {
+  id           String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  first_name   String    @db.VarChar(100)
+  last_name    String    @db.VarChar(100)
+  email        String    @db.VarChar(100)
+  phone        String?   @db.VarChar(20)
+  company      String?   @db.VarChar(200)
+  service_type String?   @db.VarChar(100)
+  message      String
+  status       String?   @default("new") @db.VarChar(20)
+  is_read      Boolean?  @default(false)
+  created_at   DateTime? @default(now()) @db.Timestamptz(6)
+  updated_at   DateTime? @default(now()) @db.Timestamptz(6)
+
+  @@index([created_at], map: "idx_contact_messages_created_at")
+  @@index([status], map: "idx_contact_messages_status")
+}
+
+model content_pages {
+  id                  String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  page_key            String    @unique @db.VarChar(100)
+  title_en            String    @db.VarChar(200)
+  title_ar            String    @db.VarChar(200)
+  title_ro            String    @db.VarChar(200)
+  content_en          String
+  content_ar          String
+  content_ro          String
+  meta_description_en String?
+  meta_description_ar String?
+  meta_description_ro String?
+  is_active           Boolean?  @default(true)
+  created_at          DateTime? @default(now()) @db.Timestamptz(6)
+  updated_at          DateTime? @default(now()) @db.Timestamptz(6)
+
+  @@index([page_key], map: "idx_content_pages_key")
+}
+
+model settings {
+  id            String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  setting_key   String    @unique @db.VarChar(100)
+  setting_value String
+  setting_type  String?   @default("string") @db.VarChar(20)
+  description   String?
+  is_public     Boolean?  @default(false)
+  created_at    DateTime? @default(now()) @db.Timestamptz(6)
+  updated_at    DateTime? @default(now()) @db.Timestamptz(6)
+
+  @@index([setting_key], map: "idx_settings_key")
+}
+
+model team_members {
+  id               String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  name_en          String    @db.VarChar(100)
+  name_ar          String    @db.VarChar(100)
+  name_ro          String    @db.VarChar(100)
+  position_en      String    @db.VarChar(100)
+  position_ar      String    @db.VarChar(100)
+  position_ro      String    @db.VarChar(100)
+  bio_en           String?
+  bio_ar           String?
+  bio_ro           String?
+  email            String?   @db.VarChar(100)
+  phone            String?   @db.VarChar(20)
+  image_url        String?   @db.VarChar(500)
+  linkedin_url     String?   @db.VarChar(200)
+  experience_years Int?
+  is_active        Boolean?  @default(true)
+  sort_order       Int?      @default(0)
+  created_at       DateTime? @default(now()) @db.Timestamptz(6)
+  updated_at       DateTime? @default(now()) @db.Timestamptz(6)
+
+  @@index([is_active], map: "idx_team_members_active")
+}
+
+model users {
+  id            String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  username      String    @unique @db.VarChar(50)
+  email         String    @unique @db.VarChar(100)
+  password_hash String    @db.VarChar(255)
+  role          String?   @default("admin") @db.VarChar(20)
+  is_active     Boolean?  @default(true)
+  created_at    DateTime? @default(now()) @db.Timestamptz(6)
+  updated_at    DateTime? @default(now()) @db.Timestamptz(6)
+
+  @@index([email], map: "idx_users_email")
+  @@index([username], map: "idx_users_username")
+}

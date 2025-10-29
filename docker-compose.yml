@@ -1,0 +1,7 @@
+## docker-compose removed
+
+# Docker has been removed from this project per maintainer request.
+# The original postgres service used port mapping 5433:5432.
+# If you need to run Postgres locally, use a system installation or a Docker command
+# (not recommended here). Configure your database connection via environment
+# variables (DATABASE_URL or PGHOST/PGPORT/PGUSER/PGPASSWORD/PGDATABASE).
